@@ -146,7 +146,6 @@ export default {
 
       // Instead of this timeout, here you can call your API
       window.setTimeout(() => {
-        this.userSaved = true;
         this.sending = false;
         this.clearForm();
         this.showDialog = false;
