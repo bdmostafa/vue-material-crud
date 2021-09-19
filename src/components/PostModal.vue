@@ -77,7 +77,6 @@
             <md-button
               type="submit"
               class="md-primary"
-              @click="showDialog = false"
               :disabled="sending"
               >Submit</md-button
             >
@@ -102,6 +101,7 @@ export default {
   data () {
       return {
     showDialog: true,
+    title: '',
     form: {
       title: null,
       category: null,
@@ -109,7 +109,6 @@ export default {
     },
     postSubmitted: false,
     sending: false
-    //   lastUser: null
   }},
   validations: {
     form: {
@@ -129,7 +128,7 @@ export default {
   methods: {
     getValidationClass(fieldName) {
       const field = this.$v.form[fieldName];
-console.log(field)
+
       if (field) {
         return {
           "md-invalid": field.$invalid && field.$dirty
@@ -147,11 +146,12 @@ console.log(field)
 
       // Instead of this timeout, here you can call your API
       window.setTimeout(() => {
-        //   this.lastUser = `${this.form.firstName} ${this.form.lastName}`
         this.userSaved = true;
         this.sending = false;
         this.clearForm();
+        this.showDialog = false;
       }, 1500);
+
     },
     validateUser() {
       this.$v.$touch();

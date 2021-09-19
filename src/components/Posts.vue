@@ -25,7 +25,8 @@
         <md-table-row>
           <md-table-cell>Assistant Media Planner</md-table-cell>
           <md-table-cell>
-            <md-icon class="fa fa-external-link-square"></md-icon>
+            <span @click="isPostDetailsModal = true">
+            <md-icon class="fa fa-external-link-square" ></md-icon> </span>
             <md-icon class="fa fa-edit"></md-icon>
             <md-icon class="fa fa-trash"></md-icon>
           </md-table-cell>
@@ -36,23 +37,38 @@
     <div v-if="isModal">
       <PostModal />
     </div>
+    
+    <div v-if="isPostDetailsModal">
+      <div>Hellow</div>
+      <PostDetailsModal />
+    </div>
   </div>
 </template>
 
 <script>
 import PostModal from "./PostModal.vue";
+import PostDetailsModal from "./PostDetailsModal.vue";
 
 export default {
   name: "Posts",
   components: {
-    PostModal
+    PostModal,
+    PostDetailsModal
   },
   data() {
     return {
       isModal: false,
+      isPostDetailsModal: false
     };
   },
-  methods: {}
+  methods: {
+    go: () => {
+console.log(this.isPostDetailsModal)
+    }
+  },
+  computed: {
+    
+  }
 };
 </script>
 
