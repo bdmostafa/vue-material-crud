@@ -22,11 +22,12 @@
           <md-table-head>Action</md-table-head>
         </md-table-row>
 
-        <md-table-row>
-          <md-table-cell>Assistant Media Planner</md-table-cell>
+        <md-table-row v-for="post in postData" :key="post.id">
+          <md-table-cell> {{ post.title }} </md-table-cell>
           <md-table-cell>
             <span @click="isPostDetailsModal = true">
-            <md-icon class="fa fa-external-link-square" ></md-icon> </span>
+              <md-icon class="fa fa-external-link-square"></md-icon>
+            </span>
             <md-icon class="fa fa-edit"></md-icon>
             <md-icon class="fa fa-trash"></md-icon>
           </md-table-cell>
@@ -37,9 +38,8 @@
     <div v-if="isModal">
       <PostModal />
     </div>
-    
+
     <div v-if="isPostDetailsModal">
-      <div>Hellow</div>
       <PostDetailsModal />
     </div>
   </div>
@@ -58,17 +58,29 @@ export default {
   data() {
     return {
       isModal: false,
-      isPostDetailsModal: false
+      isPostDetailsModal: false,
+      postData: [
+        {
+          id: '',
+          title: '',
+          category: '',
+          body: ''
+        },
+      ],
     };
   },
-  methods: {
-    go: () => {
-console.log(this.isPostDetailsModal)
+  methods: {},
+  mounted() {
+    if (localStorage.postData) {
+      this.postData = localStorage.postData;
     }
   },
-  computed: {
-    
+  watch: {
+    postData(newPost) {
+      // localStorage.postData.push(newPost);
+    }
   }
+  
 };
 </script>
 

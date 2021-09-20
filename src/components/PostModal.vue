@@ -1,8 +1,7 @@
 <template>
   <div>
     <md-dialog :md-active.sync="showDialog">
-
-      <form novalidate class="md-layout" @submit.prevent="validateUser">
+      <form novalidate class="md-layout" @submit.prevent="validatePost">
         <md-card class="md-layout-item md-size-100 md-small-size-100">
           <md-card-header>
             <div class="md-title">CREATE POST</div>
@@ -40,9 +39,9 @@
                     :disabled="sending"
                     multiple
                   >
-                    <span> + Create New Category</span>
-                    <md-option value="1">Array </md-option>
-                    <md-option value="2">Array </md-option>
+                    <h3> + Create New Category</h3>
+                    <md-option value="Cat 1">Cat 1 </md-option>
+                    <md-option value="Cat 2">Cat 2 </md-option>
                   </md-select>
                   <span class="md-error">The category is required</span>
                 </md-field>
@@ -74,10 +73,7 @@
             <md-button class="md-primary" @click="showDialog = false"
               >Cancel</md-button
             >
-            <md-button
-              type="submit"
-              class="md-primary"
-              :disabled="sending"
+            <md-button type="submit" class="md-primary" :disabled="sending"
               >Submit</md-button
             >
           </md-card-actions>
@@ -98,18 +94,27 @@ import { required, minLength, maxLength } from "vuelidate/lib/validators";
 export default {
   name: "PostModal",
   mixins: [validationMixin],
-  data () {
-      return {
-    showDialog: true,
-    title: '',
-    form: {
-      title: null,
-      category: null,
-      body: null
-    },
-    postSubmitted: false,
-    sending: false
-  }},
+  data() {
+    return {
+      postData: [
+        {
+          id: "",
+          title: "",
+          category: "",
+          body: ""
+        }
+      ],
+      showDialog: true,
+      title: "",
+      form: {
+        title: null,
+        category: null,
+        body: null
+      },
+      postSubmitted: false,
+      sending: false
+    };
+  },
   validations: {
     form: {
       title: {
@@ -122,6 +127,15 @@ export default {
       body: {
         required,
         maxLength: maxLength(100)
+      }
+    }
+  },
+  mounted() {
+    if (localStorage.getItem("postData")) {
+      try {
+        this.postData = JSON.parse(localStorage.getItem("postData"));
+      } catch (e) {
+        localStorage.removeItem("postData");
       }
     }
   },
@@ -141,18 +155,54 @@ export default {
       this.form.category = null;
       this.form.body = null;
     },
+    // removeCat(x) {
+    //   this.cats.splice(x, 1);
+    //   this.saveCats();
+    // },
     submitPost() {
       this.sending = true;
 
+      // Save into local storage
+      if (localStorage.getItem("postData")) {
+        const posts = JSON.parse(localStorage.getItem("postData"));
+
+        const newPost = {
+          id: parseInt(posts.length + 1),
+          title: this.form.title,
+          category: this.form.category,
+          body: this.form.body
+        };
+
+        let updatedPosts = [...posts, newPost];
+
+        // Update data property
+        this.postData = updatedPosts;
+
+        // localStorage.removeItem('postData');
+        localStorage.setItem("postData", JSON.stringify(this.postData));
+      } else {
+        const newPost = {
+          id: 1,
+          title: this.form.title,
+          category: this.form.category,
+          body: this.form.body
+        };
+
+        // Update data property
+        this.postData.push(newPost);
+
+        localStorage.setItem("postData", JSON.stringify(this.postData));
+      }
+
       // Instead of this timeout, here you can call your API
+      // We are using local storage above
       window.setTimeout(() => {
         this.sending = false;
         this.clearForm();
         this.showDialog = false;
       }, 1500);
-
     },
-    validateUser() {
+    validatePost() {
       this.$v.$touch();
 
       if (!this.$v.$invalid) {
@@ -165,11 +215,11 @@ export default {
 
 <style scoped>
 .md-dialog /deep/.md-dialog-container {
-    max-width: 768px;
-  }
-  .md-card-header {
-    padding: 16px;
-    background-color: darkorange;
-    color: white;
-  }
+  max-width: 768px;
+}
+.md-card-header {
+  padding: 16px;
+  background-color: darkorange;
+  color: white;
+}
 </style>
