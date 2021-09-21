@@ -168,10 +168,6 @@ export default {
       this.form.category = null;
       this.form.body = null;
     },
-    // removeCat(x) {
-    //   this.cats.splice(x, 1);
-    //   this.saveCats();
-    // },
     submitPost() {
       this.sending = true;
 

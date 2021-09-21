@@ -41,7 +41,9 @@
                 </div>
               </span>
 
-              <md-icon class="fa fa-trash"></md-icon>
+              <span @click="deletePost(post.id)">
+                <md-icon class="fa fa-trash"></md-icon>
+              </span>
             </md-table-cell>
           </span>
         </md-table-row>
@@ -85,6 +87,10 @@ export default {
       this.activeIndex = index;
       this.isPostDetailsModal = false;
       this.isPostModal = false;
+    },
+    deletePost(id) {
+      this.postData = this.postData.filter(post => post.id !== id)
+      localStorage.setItem('postData', JSON.stringify(this.postData))
     }
   },
   mounted() {
