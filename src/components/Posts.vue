@@ -10,37 +10,46 @@
         <div class="md-layout-item">
           <md-button
             class="md-raised md-accent create-btn"
-            @click="isModal = true"
+            @click="isPostModal = true"
           >
             <md-icon class="fa fa-plus"></md-icon>Create Post</md-button
           >
         </div>
       </div>
-      <md-table>
+      <md-table class="md-table-area">
         <md-table-row>
           <md-table-head>Title</md-table-head>
           <md-table-head>Action</md-table-head>
         </md-table-row>
 
-        <md-table-row v-for="post in postData" :key="post.id">
+        <md-table-row v-for="(post, index) in postData" :key="index">
           <md-table-cell> {{ post.title }} </md-table-cell>
-          <md-table-cell>
-            <span @click="isPostDetailsModal = true">
-              <md-icon class="fa fa-external-link-square"></md-icon>
-            </span>
-            <md-icon class="fa fa-edit"></md-icon>
-            <md-icon class="fa fa-trash"></md-icon>
-          </md-table-cell>
+          <span class="icons-area">
+            <md-table-cell>
+              <span @click="goPostDetails(index)">
+                <md-icon class="fa fa-external-link-square"></md-icon>
+              </span>
+
+              <div v-if="isPostDetailsModal && activeIndex === index">
+                <PostDetailsModal :post="post" />
+              </div>
+
+              <span @click="goPostModalForEdit(index)">
+                <md-icon class="fa fa-edit"></md-icon>
+                <div v-if="isPostModalEdit && activeIndex === index">
+                  <PostModal :post="post" />
+                </div>
+              </span>
+
+              <md-icon class="fa fa-trash"></md-icon>
+            </md-table-cell>
+          </span>
         </md-table-row>
       </md-table>
     </md-content>
 
-    <div v-if="isModal">
+    <div v-if="isPostModal">
       <PostModal />
-    </div>
-
-    <div v-if="isPostDetailsModal">
-      <PostDetailsModal />
     </div>
   </div>
 </template>
@@ -57,30 +66,39 @@ export default {
   },
   data() {
     return {
-      isModal: false,
+      isPostModal: false,
+      isPostModalEdit: false,
       isPostDetailsModal: false,
-      postData: [
-        {
-          id: '',
-          title: '',
-          category: '',
-          body: ''
-        },
-      ],
+      activeIndex: -1,
+      postData: []
     };
   },
-  methods: {},
-  mounted() {
-    if (localStorage.postData) {
-      this.postData = localStorage.postData;
+  methods: {
+    goPostDetails(index) {
+      this.activeIndex = index;
+      this.isPostDetailsModal = true;
+      this.isPostModal = false;
+      this.isPostModalEdit = false;
+    },
+    goPostModalForEdit(index) {
+      this.isPostModalEdit = true;
+      this.activeIndex = index;
+      this.isPostDetailsModal = false;
+      this.isPostModal = false;
     }
+  },
+  mounted() {
+    if (localStorage.getItem("postData")) {
+      const persedPosts = JSON.parse(localStorage.getItem("postData"));
+      this.postData = persedPosts;
+    }
+    console.log(this.postData);
   },
   watch: {
     postData(newPost) {
       // localStorage.postData.push(newPost);
     }
   }
-  
 };
 </script>
 
@@ -89,6 +107,10 @@ export default {
   max-width: 450px;
   display: flex;
   align-items: center;
+  margin: 0 auto;
+}
+.md-table-area {
+  max-width: 600px;
   margin: 0 auto;
 }
 .create-btn {
@@ -106,5 +128,17 @@ export default {
 .md-table.md-theme-default .md-table-head {
   font-weight: bold;
   font-size: 18px;
+}
+.md-table-head {
+  text-align: center;
+}
+.md-table-row {
+  text-align: center;
+}
+.icons-area {
+  display: contents;
+}
+.md-table-cell-container {
+  display: inline-flex;
 }
 </style>

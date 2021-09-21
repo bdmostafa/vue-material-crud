@@ -6,11 +6,11 @@
           <div class="md-title">POST Details</div>
         </md-card-header>
 
-        <md-dialog-title>Title: Post name</md-dialog-title>
+        <md-dialog-title>Title: {{ post.title }} </md-dialog-title>
 
         <div>
-          <md-content> <strong> Category: Cat 1 | Cat 2 </strong> </md-content>
-          <md-content> <strong> Body: </strong> Post body ... </md-content>
+          <md-content> <strong> Category: <span v-for="(category, index) in post.category" :key="index"> {{ category }} </span> </strong> </md-content>
+          <md-content> <strong> Body: </strong> {{ post.body }} </md-content>
         </div>
 
         <md-card-actions>
@@ -26,9 +26,12 @@
 <script>
 export default {
   name: "PostDetailsModal",
+  props: 
+      ['post']
+  ,
   data() {
     return {
-      showDialog: true
+      showDialog: true,
     };
   },
   methods: {}
@@ -43,5 +46,8 @@ export default {
   padding: 16px;
   background-color: darkorange;
   color: white;
+}
+.md-table-cell-container {
+  display: inline-flex;
 }
 </style>

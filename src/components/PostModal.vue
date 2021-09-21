@@ -39,7 +39,7 @@
                     :disabled="sending"
                     multiple
                   >
-                    <h3> + Create New Category</h3>
+                    <h3>+ Create New Category</h3>
                     <md-option value="Cat 1">Cat 1 </md-option>
                     <md-option value="Cat 2">Cat 2 </md-option>
                   </md-select>
@@ -94,6 +94,7 @@ import { required, minLength, maxLength } from "vuelidate/lib/validators";
 export default {
   name: "PostModal",
   mixins: [validationMixin],
+  props: ["post"],
   data() {
     return {
       postData: [
@@ -131,6 +132,7 @@ export default {
     }
   },
   mounted() {
+    // Load post data from local storage
     if (localStorage.getItem("postData")) {
       try {
         this.postData = JSON.parse(localStorage.getItem("postData"));
@@ -138,6 +140,17 @@ export default {
         localStorage.removeItem("postData");
       }
     }
+
+    // Assign value into the inputs fields from props (post)
+    let vm = this;
+
+    vm.$nextTick(function() {
+      if (vm.post) {
+        this.form.title = vm.post.title;
+        this.form.category = vm.post.category;
+        this.form.body = vm.post.body;
+      }
+    });
   },
   methods: {
     getValidationClass(fieldName) {
@@ -162,25 +175,51 @@ export default {
     submitPost() {
       this.sending = true;
 
-      // Save into local storage
+      // When there is any post already in the list
       if (localStorage.getItem("postData")) {
         const posts = JSON.parse(localStorage.getItem("postData"));
 
-        const newPost = {
-          id: parseInt(posts.length + 1),
-          title: this.form.title,
-          category: this.form.category,
-          body: this.form.body
-        };
+        // When the current post remains (for updating purposes)
+        if (this.post) {
+          const postIndex = posts.findIndex(p => p.id === this.post.id);
+          console.log(postIndex);
 
-        let updatedPosts = [...posts, newPost];
+          // For editing the current post
+          if (postIndex > -1) {
+            let updatedPost = {
+              id: this.post.id,
+              title: this.form.title,
+              category: this.form.category,
+              body: this.form.body
+            };
 
-        // Update data property
-        this.postData = updatedPosts;
+            posts.splice(postIndex, 1, updatedPost);
+
+            // Update data property
+            this.postData = posts;
+          }
+        }
+        // For adding new post
+        else {
+          const newPost = {
+            id: parseInt(posts.length + 1),
+            title: this.form.title,
+            category: this.form.category,
+            body: this.form.body
+          };
+
+          let updatedPosts = [...posts, newPost];
+
+          // Update data property
+          this.postData = updatedPosts;
+        }
 
         // localStorage.removeItem('postData');
+        // Save into local storage
         localStorage.setItem("postData", JSON.stringify(this.postData));
-      } else {
+      }
+      // When there is no post in the list, set id as 1
+      else {
         const newPost = {
           id: 1,
           title: this.form.title,
@@ -191,6 +230,7 @@ export default {
         // Update data property
         this.postData.push(newPost);
 
+        // Save into local storage
         localStorage.setItem("postData", JSON.stringify(this.postData));
       }
 
@@ -221,5 +261,8 @@ export default {
   padding: 16px;
   background-color: darkorange;
   color: white;
+}
+.md-table-cell-container {
+  display: inline-flex;
 }
 </style>

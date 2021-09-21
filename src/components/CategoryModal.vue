@@ -125,4 +125,7 @@ export default {
   background-color: darkorange;
   color: white;
 }
+.md-table-cell-container {
+  display: inline-flex;
+}
 </style>

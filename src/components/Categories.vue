@@ -79,4 +79,7 @@ export default {
   font-weight: bold;
   font-size: 18px;
 }
+.md-table-cell-container {
+  display: inline-flex;
+}
 </style>
