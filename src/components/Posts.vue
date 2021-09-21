@@ -98,7 +98,7 @@ export default {
       const persedPosts = JSON.parse(localStorage.getItem("posts"));
       this.posts = persedPosts;
     }
-    console.log(this.posts);
+    // console.log(this.posts);
   },
   watch: {
     posts(newPost) {

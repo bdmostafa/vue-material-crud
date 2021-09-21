@@ -10,7 +10,7 @@
           <md-card-content>
             <div class="md-layout md-gutter">
               <div class="md-layout-item md-small-size-100">
-                <md-field :class="getValidationClass('title')">
+                <md-field :class="getValidationClass('name')">
                   <label for="name">Name</label>
                   <md-input
                     name="name"
@@ -45,9 +45,9 @@
           </md-card-actions>
         </md-card>
 
-        <md-snackbar :md-active.sync="categorySubmitted"
-          >The category named "{{ name }}" was saved with success!</md-snackbar
-        >
+        <md-snackbar :md-active.sync="categorySubmitted">
+          The category named "{{ name }}" was saved with success!
+        </md-snackbar>
       </form>
     </md-dialog>
   </div>
@@ -60,6 +60,7 @@ import { required, minLength, maxLength } from "vuelidate/lib/validators";
 export default {
   name: "CategoryModal",
   mixins: [validationMixin],
+  props: ["category"],
   data() {
     return {
       showDialog: true,
@@ -68,7 +69,8 @@ export default {
         name: null
       },
       categorySubmitted: false,
-      sending: false
+      sending: false,
+      categories: []
     };
   },
   validations: {
@@ -97,6 +99,60 @@ export default {
     submitCategory() {
       this.sending = true;
 
+      // When there is already any category in the list
+      if (localStorage.getItem("categories")) {
+        const parsedCategories = JSON.parse(localStorage.getItem("categories"));
+
+        // When the current category remains (for updating purposes)
+        if (this.category) {
+          const categoryIndex = parsedCategories.findIndex(
+            cat => cat.id === this.category.id
+          );
+
+          // For editing the current post
+          if (categoryIndex > -1) {
+            let updatedCategory = {
+              id: this.category.id,
+              name: this.form.name
+            };
+
+            parsedCategories.splice(categoryIndex, 1, updatedCategory);
+
+            // Update data property
+            this.categories = parsedCategories;
+          }
+        }
+        // For adding new category
+        else {
+          const newCategory = {
+            id: parseInt(parsedCategories.length + 1),
+            name: this.form.name
+          };
+
+          let updatedCategories = [...parsedCategories, newCategory];
+
+          // Update data property
+          this.categories = updatedCategories;
+        }
+
+        // localStorage.removeItem('categories');
+        // Save into local storage
+        localStorage.setItem("categories", JSON.stringify(this.categories));
+      }
+      // When there is no category in the list, set id as 1
+      else {
+        const newCategory = {
+          id: 1,
+          name: this.form.name
+        };
+
+        // Update data property
+        this.categories.push(newCategory);
+
+        // Save into local storage
+        localStorage.setItem("categories", JSON.stringify(this.categories));
+      }
+
       // Instead of this timeout, here you can call your API
       window.setTimeout(() => {
         this.sending = false;
@@ -109,9 +165,28 @@ export default {
 
       if (!this.$v.$invalid) {
         this.submitCategory();
-        console.log(this.form.name);
+        // console.log(this.form.name);
       }
     }
+  },
+  mounted() {
+    // Load categories data from local storage
+    if (localStorage.getItem("categories")) {
+      try {
+        this.categories = JSON.parse(localStorage.getItem("categories"));
+      } catch (e) {
+        localStorage.removeItem("categories");
+      }
+    }
+
+    // Assign value into the inputs fields from props (category)
+    let vm = this;
+
+    vm.$nextTick(function() {
+      if (vm.category) {
+        this.form.name = vm.category.name;
+      }
+    });
   }
 };
 </script>

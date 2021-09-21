@@ -97,14 +97,7 @@ export default {
   props: ["post"],
   data() {
     return {
-      postData: [
-        {
-          id: "",
-          title: "",
-          category: "",
-          body: ""
-        }
-      ],
+      postData: [],
       showDialog: true,
       title: "",
       form: {

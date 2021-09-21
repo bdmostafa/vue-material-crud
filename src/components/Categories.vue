@@ -22,12 +22,21 @@
           <md-table-head>Action</md-table-head>
         </md-table-row>
 
-        <md-table-row>
-          <md-table-cell>Cat 1</md-table-cell>
+        <md-table-row v-for="(category, index) in categories" :key="index">
+          <md-table-cell> {{ category.name }} </md-table-cell>
           <span class="icons-area">
             <md-table-cell>
-              <md-icon class="fa fa-edit"></md-icon>
-              <md-icon class="fa fa-trash"></md-icon>
+              <span @click="goCategoryModalForEdit(index)">
+                <md-icon class="fa fa-edit"></md-icon>
+              </span>
+
+              <div v-if="isCategoryModalEdit && activeIndex === index">
+                <CategoryModal :category="category" />
+              </div>
+
+              <span @click="removeCategory(category.id)">
+                <md-icon class="fa fa-trash"></md-icon>
+              </span>
             </md-table-cell>
           </span>
         </md-table-row>
@@ -50,11 +59,31 @@ export default {
   },
   data() {
     return {
-      isModal: false
+      isModal: false,
+      isCategoryModalEdit: false,
+      activeIndex: -1,
+      categories: []
     };
   },
-  methods: {},
-  computed: {}
+  methods: {
+    goCategoryModalForEdit(index) {
+      this.activeIndex = index;
+      this.isCategoryModalEdit = true;
+      this.isModal = false;
+    },
+    removeCategory(id) {
+      this.categories = this.categories.filter(category => category.id !== id);
+      localStorage.setItem("categories", JSON.stringify(this.categories));
+    }
+  },
+  computed: {},
+  mounted() {
+    if (localStorage.getItem("categories")) {
+      const persedCategories = JSON.parse(localStorage.getItem("categories"));
+      this.categories = persedCategories;
+    }
+    console.log(this.categories);
+  }
 };
 </script>
 
