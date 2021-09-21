@@ -16,7 +16,7 @@
           >
         </div>
       </div>
-      <md-table>
+      <md-table class="md-table-area">
         <md-table-row>
           <md-table-head>Name</md-table-head>
           <md-table-head>Action</md-table-head>
@@ -24,10 +24,12 @@
 
         <md-table-row>
           <md-table-cell>Cat 1</md-table-cell>
-          <md-table-cell>
-            <md-icon class="fa fa-edit"></md-icon>
-            <md-icon class="fa fa-trash"></md-icon>
-          </md-table-cell>
+          <span class="icons-area">
+            <md-table-cell>
+              <md-icon class="fa fa-edit"></md-icon>
+              <md-icon class="fa fa-trash"></md-icon>
+            </md-table-cell>
+          </span>
         </md-table-row>
       </md-table>
     </md-content>
@@ -63,6 +65,10 @@ export default {
   align-items: center;
   margin: 0 auto;
 }
+.md-table-area {
+  max-width: 600px;
+  margin: 0 auto;
+}
 .create-btn {
   font-weight: bold;
 }
@@ -81,5 +87,14 @@ export default {
 }
 .md-table-cell-container {
   display: inline-flex;
+}
+.md-table-head {
+  text-align: center;
+}
+.md-table-row {
+  text-align: center;
+}
+.icons-area {
+  display: contents;
 }
 </style>

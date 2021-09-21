@@ -133,11 +133,11 @@ export default {
   },
   mounted() {
     // Load post data from local storage
-    if (localStorage.getItem("postData")) {
+    if (localStorage.getItem("posts")) {
       try {
-        this.postData = JSON.parse(localStorage.getItem("postData"));
+        this.postData = JSON.parse(localStorage.getItem("posts"));
       } catch (e) {
-        localStorage.removeItem("postData");
+        localStorage.removeItem("posts");
       }
     }
 
@@ -172,8 +172,8 @@ export default {
       this.sending = true;
 
       // When there is any post already in the list
-      if (localStorage.getItem("postData")) {
-        const posts = JSON.parse(localStorage.getItem("postData"));
+      if (localStorage.getItem("posts")) {
+        const posts = JSON.parse(localStorage.getItem("posts"));
 
         // When the current post remains (for updating purposes)
         if (this.post) {
@@ -210,9 +210,9 @@ export default {
           this.postData = updatedPosts;
         }
 
-        // localStorage.removeItem('postData');
+        // localStorage.removeItem('posts');
         // Save into local storage
-        localStorage.setItem("postData", JSON.stringify(this.postData));
+        localStorage.setItem("posts", JSON.stringify(this.postData));
       }
       // When there is no post in the list, set id as 1
       else {
@@ -227,7 +227,7 @@ export default {
         this.postData.push(newPost);
 
         // Save into local storage
-        localStorage.setItem("postData", JSON.stringify(this.postData));
+        localStorage.setItem("posts", JSON.stringify(this.postData));
       }
 
       // Instead of this timeout, here you can call your API

@@ -22,7 +22,7 @@
           <md-table-head>Action</md-table-head>
         </md-table-row>
 
-        <md-table-row v-for="(post, index) in postData" :key="index">
+        <md-table-row v-for="(post, index) in posts" :key="index">
           <md-table-cell> {{ post.title }} </md-table-cell>
           <span class="icons-area">
             <md-table-cell>
@@ -72,7 +72,7 @@ export default {
       isPostModalEdit: false,
       isPostDetailsModal: false,
       activeIndex: -1,
-      postData: []
+      posts: []
     };
   },
   methods: {
@@ -89,20 +89,20 @@ export default {
       this.isPostModal = false;
     },
     deletePost(id) {
-      this.postData = this.postData.filter(post => post.id !== id)
-      localStorage.setItem('postData', JSON.stringify(this.postData))
+      this.posts = this.posts.filter(post => post.id !== id)
+      localStorage.setItem('posts', JSON.stringify(this.posts))
     }
   },
   mounted() {
-    if (localStorage.getItem("postData")) {
-      const persedPosts = JSON.parse(localStorage.getItem("postData"));
-      this.postData = persedPosts;
+    if (localStorage.getItem("posts")) {
+      const persedPosts = JSON.parse(localStorage.getItem("posts"));
+      this.posts = persedPosts;
     }
-    console.log(this.postData);
+    console.log(this.posts);
   },
   watch: {
-    postData(newPost) {
-      // localStorage.postData.push(newPost);
+    posts(newPost) {
+      // localStorage.posts.push(newPost);
     }
   }
 };
