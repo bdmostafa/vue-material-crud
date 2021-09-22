@@ -31,18 +31,33 @@
               <div class="md-layout-item md-small-size-100">
                 <md-field :class="getValidationClass('category')">
                   <label for="category">Category</label>
-                  <md-select
-                    name="category"
-                    id="category"
-                    v-model="form.category"
-                    md-dense
-                    :disabled="sending"
-                    multiple
-                  >
-                    <h3>+ Create New Category</h3>
-                    <md-option value="Cat 1">Cat 1 </md-option>
-                    <md-option value="Cat 2">Cat 2 </md-option>
-                  </md-select>
+
+                    <md-select
+                      name="category"
+                      id="category"
+                      v-model="form.category"
+                      md-dense
+                      :disabled="sending"
+                      multiple
+                      :class="isCategoryModal ? zIndex : ''"
+                    >
+                      <span @click="createNewCategory">
+                        <md-button> + Create New Category </md-button>
+                      </span>
+
+                      <div v-if="isCategoryModal">
+                        <CategoryModal />
+                      </div>
+
+                      <md-option
+                        v-for="(category, index) in categories"
+                        :key="index"
+                        :value="category.name"
+                      >
+                        {{ category.name }}
+                      </md-option>
+                    </md-select>
+
                   <span class="md-error">The category is required</span>
                 </md-field>
               </div>
@@ -58,12 +73,13 @@
                 v-model="form.body"
                 :disabled="sending"
               />
-              <span class="md-error" v-if="!$v.form.body.required"
-                >The body is required</span
-              >
-              <span class="md-error" v-else-if="!$v.form.body.minlength"
-                >Invalid body</span
-              >
+              <span class="md-error" v-if="!$v.form.body.required">
+                The body is required
+              </span>
+
+              <span class="md-error" v-else-if="!$v.form.body.minlength">
+                Invalid body
+              </span>
             </md-field>
           </md-card-content>
 
@@ -90,15 +106,21 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, minLength, maxLength } from "vuelidate/lib/validators";
+import CategoryModal from "./CategoryModal.vue";
 
 export default {
   name: "PostModal",
   mixins: [validationMixin],
   props: ["post"],
+  components: {
+    CategoryModal
+  },
   data() {
     return {
       postData: [],
+      categories: [],
       showDialog: true,
+      isCategoryModal: false,
       title: "",
       form: {
         title: null,
@@ -144,6 +166,13 @@ export default {
         this.form.body = vm.post.body;
       }
     });
+
+    // Load categories data from local storage
+    if (localStorage.getItem("categories")) {
+      const persedCategories = JSON.parse(localStorage.getItem("categories"));
+      this.categories = persedCategories;
+    }
+    console.log(this.categories);
   },
   methods: {
     getValidationClass(fieldName) {
@@ -237,6 +266,9 @@ export default {
       if (!this.$v.$invalid) {
         this.submitPost();
       }
+    },
+    createNewCategory() {
+      this.isCategoryModal = true;
     }
   }
 };
@@ -253,5 +285,12 @@ export default {
 }
 .md-table-cell-container {
   display: inline-flex;
+}
+.zIndex {
+  z-index: 0;
+  /* &.md-menu-content.md-select-menu {
+    z-index: 0;
+  } */
+  
 }
 </style>
